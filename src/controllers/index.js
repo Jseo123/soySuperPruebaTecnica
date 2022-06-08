@@ -10,15 +10,16 @@ const getCrawlerData = async (req, res) => {
   }
 };
 
-const getCrawlerDataPages = async (req, res) => {
-  try {
-    const { page } = req.params;
-    const url = `https://news.ycombinator.com/news?p=${page}`;
-    let crawledJson = await init(url);
-    res.json(crawledJson);
-  } catch (error) {
-    console.log(error);
-  }
+const getCrawlerDataPages = async (page) => {
+  const url = `https://news.ycombinator.com/news?p=${page}`;
+  let crawledJson = await init(url);
+  return crawledJson;
 };
 
-module.exports = { getCrawlerData, getCrawlerDataPages };
+const addedCrawlerData = async (req, res) => {
+  const { page } = req.params;
+  const url = `https://news.ycombinator.com/news?p=${page}`;
+  let crawledJson = await init(url);
+  res.json(crawledJson);
+};
+module.exports = { getCrawlerData, addedCrawlerData };
