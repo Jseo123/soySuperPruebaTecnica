@@ -18,8 +18,15 @@ const getCrawlerDataPages = async (page) => {
 
 const addedCrawlerData = async (req, res) => {
   const { page } = req.params;
-  const url = `https://news.ycombinator.com/news?p=${page}`;
-  let crawledJson = await init(url);
-  res.json(crawledJson);
+  const fullArray = [];
+  try {
+    for (let index = 1; index <= page; index++) {
+      const arrayToAdd = await getCrawlerDataPages(index);
+      fullArray.push(arrayToAdd);
+    }
+    res.json(fullArray);
+  } catch (error) {
+    console.log(error);
+  }
 };
 module.exports = { getCrawlerData, addedCrawlerData };
