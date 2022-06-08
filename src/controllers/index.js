@@ -22,7 +22,9 @@ const addedCrawlerData = async (req, res) => {
   try {
     for (let index = 1; index <= page; index++) {
       const arrayToAdd = await getCrawlerDataPages(index);
-      fullArray.push(arrayToAdd);
+      arrayToAdd.forEach((element) => {
+        fullArray.push(element);
+      });
     }
     res.json(fullArray);
   } catch (error) {
