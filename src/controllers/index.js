@@ -3,8 +3,6 @@ const { init } = require("../crawler/crawler");
 const getCrawlerData = async (req, res) => {
   const url = "https://news.ycombinator.com/";
   try {
-    const { page } = req.param;
-    console.log(page);
     let crawledJson = await init(url);
     res.json(crawledJson);
   } catch (error) {
