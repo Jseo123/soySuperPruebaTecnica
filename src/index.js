@@ -1,6 +1,7 @@
 const express = require("express");
 const morgan = require("morgan");
 const dotenv = require("dotenv");
+const crawler = require("./crawler/crawler");
 const app = express();
 dotenv.config();
 
