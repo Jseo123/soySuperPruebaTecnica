@@ -1,11 +1,26 @@
-const express = require("express");
-const { send } = require("express/lib/response");
-const morgan = require("morgan");
 const { init } = require("../crawler/crawler");
 
 const getCrawlerData = async (req, res) => {
-  let crawledJson = await init();
-  res.json(crawledJson).pretty();
+  const url = "https://news.ycombinator.com/";
+  try {
+    const { page } = req.param;
+    console.log(page);
+    let crawledJson = await init(url);
+    res.json(crawledJson);
+  } catch (error) {
+    console.log(error);
+  }
 };
 
-module.exports = { getCrawlerData };
+const getCrawlerDataPages = async (req, res) => {
+  try {
+    const { page } = req.params;
+    const url = `https://news.ycombinator.com/news?p=${page}`;
+    let crawledJson = await init(url);
+    res.json(crawledJson);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+module.exports = { getCrawlerData, getCrawlerDataPages };

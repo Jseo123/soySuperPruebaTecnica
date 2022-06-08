@@ -1,8 +1,7 @@
 const cheerio = require("cheerio");
 const request = require("request-promise");
-const url = "https://news.ycombinator.com/";
 
-const init = async () => {
+const init = async (url) => {
   const $ = await request({
     uri: url,
     transform: (body) => cheerio.load(body),
