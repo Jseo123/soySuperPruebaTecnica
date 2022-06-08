@@ -1,8 +1,8 @@
 const express = require("express");
 const morgan = require("morgan");
 const dotenv = require("dotenv");
-const crawler = require("./crawler/crawler");
 const app = express();
+const router = require("./routes");
 dotenv.config();
 
 // config
@@ -13,7 +13,7 @@ app.use(morgan("dev"));
 
 //routes
 
-app.use(require("./routes/index"));
+app.use(router);
 
 //run server
 app.listen(app.get("port"), () => {

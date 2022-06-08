@@ -1,8 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const { getCrawlerData } = require("../controllers/index");
 
-router.get("/", (req, res) => {
-  res.send("Hello world");
-});
+router.get("/", getCrawlerData);
 
 module.exports = router;
