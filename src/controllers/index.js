@@ -21,28 +21,25 @@ const addedCrawlerData = async (req, res) => {
   const { page } = req.params;
   const fullArray = [];
   try {
-    const cached = checkIfCached(page);
-
-    if (cached === false) {
-      for (let index = 1; index <= page; index++) {
+    for (let index = 1; index <= page; index++) {
+      const cached = checkIfCached(index);
+      if (cached === true) {
+        const arrayToAdd = getCached(index);
+        addArray(arrayToAdd, fullArray);
+      } else {
         const arrayToAdd = await getCrawlerDataPages(index);
         myCache.set(`${index}`, arrayToAdd);
-        arrayToAdd.forEach((element) => {
-          fullArray.push(element);
-        });
+        addArray(arrayToAdd, fullArray);
       }
-      res.json(fullArray);
-    } else {
-      const cache = getCached(page);
-      res.json(cache);
     }
+    res.json(fullArray);
   } catch (error) {
     console.log(error);
   }
 };
 
-const checkIfCached = (page) => {
-  const key = page.toString();
+const checkIfCached = (index) => {
+  const key = index.toString();
   if (myCache.has(key)) {
     return true;
   } else {
@@ -50,13 +47,15 @@ const checkIfCached = (page) => {
   }
 };
 
-const getCached = (page) => {
-  const cachedItems = [];
-  for (let index = 1; index <= page; index++) {
-    const key = index.toString();
-    const items = myCache.get(key);
-    cachedItems.push(items);
-  }
+const getCached = (index) => {
+  const key = index.toString();
+  const cachedItems = myCache.get(key);
   return cachedItems;
+};
+
+const addArray = (arrayToAdd, fullArray) => {
+  arrayToAdd.forEach((element) => {
+    fullArray.push(element);
+  });
 };
 module.exports = { getCrawlerData, addedCrawlerData };
