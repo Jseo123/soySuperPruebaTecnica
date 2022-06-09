@@ -33,7 +33,8 @@ const addedCrawlerData = async (req, res) => {
       }
       res.json(fullArray);
     } else {
-      res.json("It is in cache");
+      const cache = getCached(page);
+      res.json(cache);
     }
   } catch (error) {
     console.log(error);
@@ -47,5 +48,15 @@ const checkIfCached = (page) => {
   } else {
     return false;
   }
+};
+
+const getCached = (page) => {
+  const cachedItems = [];
+  for (let index = 1; index <= page; index++) {
+    const key = index.toString();
+    const items = myCache.get(key);
+    cachedItems.push(items);
+  }
+  return cachedItems;
 };
 module.exports = { getCrawlerData, addedCrawlerData };
