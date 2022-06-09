@@ -5,6 +5,7 @@ const getCrawlerData = async (req, res) => {
   const url = "https://news.ycombinator.com/";
   try {
     let crawledJson = await init(url);
+    myCache.set("1", crawledJson);
     res.json(crawledJson);
   } catch (error) {
     console.log(error);
@@ -53,6 +54,7 @@ const getCached = (index) => {
   return cachedItems;
 };
 
+// The name is not quite descriptive but it adds the array that is either cached or coming from the crawler
 const addArray = (arrayToAdd, fullArray) => {
   arrayToAdd.forEach((element) => {
     fullArray.push(element);
