@@ -1,4 +1,5 @@
 const { init } = require("../crawler/crawler");
+const { myCache } = require("../cache/cache");
 
 const getCrawlerData = async (req, res) => {
   const url = "https://news.ycombinator.com/";
@@ -20,15 +21,30 @@ const addedCrawlerData = async (req, res) => {
   const { page } = req.params;
   const fullArray = [];
   try {
-    for (let index = 1; index <= page; index++) {
-      const arrayToAdd = await getCrawlerDataPages(index);
-      arrayToAdd.forEach((element) => {
-        fullArray.push(element);
-      });
+    const cached = checkIfCached(page);
+
+    if (cached === false) {
+      for (let index = 1; index <= page; index++) {
+        const arrayToAdd = await getCrawlerDataPages(index);
+        myCache.set(page, arrayToAdd);
+        arrayToAdd.forEach((element) => {
+          fullArray.push(element);
+        });
+      }
+      res.json(fullArray);
+    } else {
+      res.json();
     }
-    res.json(fullArray);
   } catch (error) {
     console.log(error);
+  }
+};
+
+const checkIfCached = (page) => {
+  if (myCache.has(page)) {
+    return true;
+  } else {
+    return false;
   }
 };
 module.exports = { getCrawlerData, addedCrawlerData };
