@@ -40,7 +40,7 @@ const joinArrays = async (newsArray, userArray, completeArray, $) => {
     const userName = userArray[index].user;
     const userScore = userArray[index].score;
     const commentAge = userArray[index].age;
-    const commentAmount = userArray[index].comments;
+    const commentsAmount = userArray[index].comments;
     const newsUrl = newsArray[index].url;
     completeArray.push({
       newsTitle,
@@ -48,7 +48,7 @@ const joinArrays = async (newsArray, userArray, completeArray, $) => {
       userScore,
       newsUrl,
       commentAge,
-      commentAmount,
+      commentsAmount,
     });
   }
 };
@@ -58,7 +58,7 @@ const formatHtml = (commentsHtml) => {
   if (tosplit !== null) {
     const comments = tosplit.split("&");
     return comments[0];
-  }
+  } else return "0";
 };
 
 module.exports = { init };
