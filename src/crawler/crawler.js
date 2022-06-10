@@ -11,7 +11,8 @@ const init = async (url) => {
   const completeArray = [];
   const websiteTitle = $(".titlelink ").each((i, el) => {
     const title = $(el).text();
-    newsArray.push({ title });
+    const url = $(el).attr("href");
+    newsArray.push({ title, url });
   });
 
   //separated this function to keep init at normal size and to be order to test the different parts later.
@@ -27,15 +28,36 @@ const joinArrays = async (newsArray, userArray, completeArray, $) => {
   const websiteInfo = $(".subtext").each((i, el) => {
     const user = $(el).find(".hnuser").text();
     const score = $(el).find(".score").text();
+    const age = $(el).find(".age").text();
+    const commentsHtml = $(el).find("a:nth-child(6)").html();
+    const comments = formatHtml(commentsHtml);
 
-    userArray.push({ user, score });
+    userArray.push({ user, score, age, comments });
   });
 
   for (let index = 0; index < newsArray.length; index++) {
     const newsTitle = newsArray[index].title;
     const userName = userArray[index].user;
     const userScore = userArray[index].score;
-    completeArray.push({ newsTitle, userName, userScore });
+    const commentAge = userArray[index].age;
+    const commentAmount = userArray[index].comments;
+    const newsUrl = newsArray[index].url;
+    completeArray.push({
+      newsTitle,
+      userName,
+      userScore,
+      newsUrl,
+      commentAge,
+      commentAmount,
+    });
+  }
+};
+
+const formatHtml = (commentsHtml) => {
+  const tosplit = commentsHtml;
+  if (tosplit !== null) {
+    const comments = tosplit.split("&");
+    return comments[0];
   }
 };
 
