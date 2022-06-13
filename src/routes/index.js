@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const { getCrawlerData, addedCrawlerData } = require("../controllers/index");
+const { getCrawlerData } = require("../controllers/index");
 
 router.get("/", getCrawlerData);
-router.get("/:page", addedCrawlerData);
+router.get("/:page", getCrawlerData);
 
 module.exports = router;

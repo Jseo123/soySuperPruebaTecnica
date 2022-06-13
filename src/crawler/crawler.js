@@ -1,64 +1,39 @@
 const cheerio = require("cheerio");
 const request = require("request-promise");
 
-const init = async (url) => {
-  const $ = await request({
-    uri: url,
-    transform: (body) => cheerio.load(body),
-  });
-  const newsArray = [];
-  const userArray = [];
-  const completeArray = [];
-  const websiteTitle = $(".titlelink ").each((i, el) => {
-    const title = $(el).text();
-    const url = $(el).attr("href");
-    newsArray.push({ title, url });
-  });
+class Crawler {
+  async getPageNews(page=1) {
+    const $    = await this.getPageDOM(page);
 
-  //separated this function to keep init at normal size and to be order to test the different parts later.
-  await joinArrays(newsArray, userArray, completeArray, $);
+    const news = $(".titlelink").map((i, el) => {
+      return {
+        title: $(el).text(),
+        url:   $(el).attr("href")
+      }
+    }).get();
 
-  return completeArray;
-};
+    $(".subtext").each((i, el) => {
+      news[i].user     = $(el).find(".hnuser").text();
+      news[i].score    = num($(el).find(".score").text());
+      news[i].age      = $(el).find(".age").text();
+      news[i].comments = num($(el).find("a").last().text());
+    });
 
-const joinArrays = async (newsArray, userArray, completeArray, $) => {
-  //because of the website layout (I hate tables), I was forced to separete website info from the title and to join the title
-  // and the rest of the info into a single array when just doing a single cheerio search would have
-  //been more efficient.
-  const websiteInfo = $(".subtext").each((i, el) => {
-    const user = $(el).find(".hnuser").text();
-    const score = $(el).find(".score").text();
-    const age = $(el).find(".age").text();
-    const commentsHtml = $(el).find("a:nth-child(6)").html();
-    const comments = formatHtml(commentsHtml);
+    return news;
+  }
 
-    userArray.push({ user, score, age, comments });
-  });
-
-  for (let index = 0; index < newsArray.length; index++) {
-    const newsTitle = newsArray[index].title;
-    const userName = userArray[index].user;
-    const userScore = userArray[index].score;
-    const commentAge = userArray[index].age;
-    const commentsAmount = userArray[index].comments;
-    const newsUrl = newsArray[index].url;
-    completeArray.push({
-      newsTitle,
-      userName,
-      userScore,
-      newsUrl,
-      commentAge,
-      commentsAmount,
+  async getPageDOM(page) {
+    const url = `https://news.ycombinator.com/news?p=${page}`;
+    return await request({
+      uri: url,
+      transform: (body) => cheerio.load(body),
     });
   }
-};
 
-const formatHtml = (commentsHtml) => {
-  const tosplit = commentsHtml;
-  if (tosplit !== null) {
-    const comments = tosplit.split("&");
-    return comments[0];
-  } else return "0";
-};
+}
 
-module.exports = { init };
+function num(str) {
+  return parseInt( str.replace( /\D+/g, '' ) );
+}
+
+module.exports = Crawler;
